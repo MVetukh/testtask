@@ -1,0 +1,9 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: web-app-pdb
+spec:
+  minAvailable: 3 # Минимум 3 пода всегда должны быть активны
+  selector:
+    matchLabels:
+      app: web-app

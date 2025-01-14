@@ -1,0 +1,43 @@
+
+---
+
+#### `manifests/deployment.yaml`
+Deployment с комментариями:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  labels:
+    app: web-app
+spec:
+  replicas: 4 # Минимальное количество подов для обработки пиковой нагрузки
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+        - name: web-app
+          image: your-repo/web-app:latest # Образ приложения
+          resources:
+            requests:
+              cpu: "100m" # Постоянная загрузка CPU на уровне 10%
+              memory: "128Mi" # Постоянное использование памяти
+            limits:
+              cpu: "1" # Резерв CPU для обработки первых запросов
+              memory: "256Mi" # Запас памяти на случай пиков
+          readinessProbe: # Проверка готовности
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+          livenessProbe: # Проверка, что приложение живо
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 30

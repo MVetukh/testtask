@@ -1,0 +1,16 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: web-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web-app
+  minReplicas: 1 # Минимальное количество подов для ночного времени
+  maxReplicas: 10 # Максимальное количество подов для дневной нагрузки
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 50 # Автомасштабирование при средней загрузке CPU 50%
