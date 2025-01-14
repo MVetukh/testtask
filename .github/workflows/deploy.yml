@@ -1,0 +1,26 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main # Развёртывание при каждом пуше в основную ветку
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.27.3'
+
+      - name: Deploy manifests
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }} # Секрет для подключения к кластеру
+        run: |
+          kubectl apply -f manifests/deployment.yaml
+          kubectl apply -f manifests/hpa.yaml
+          kubectl apply -f manifests/pdb.yaml
